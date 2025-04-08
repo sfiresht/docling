@@ -1,0 +1,25 @@
+FROM ubi9:latest
+
+#define a new home folder and give full permissions to it as the current HOME DIR is / which has no permissions
+ENV HOME=/home/docling
+RUN chmod 777 /home/docling
+WORKDIR /home/docling
+
+#update linux packages
+RUN dnf update -y
+RUN dnf install -y git bash wget which vim less iputils python3-pip python3-devel unzip  
+RUN dnf remove -y python3-requests
+#nvitop can't find it, when building from openshift  
+RUN dnf clean all
+
+#update pip
+RUN pip install --upgrade pip
+#update python modules
+# This will install torch with gpu support/reqs
+# This will install torch with *only* cpu support
+# add --extra-index-url https://download.pytorch.org/whl/cpu part if you want to install all the gpu requirements
+# For more details in the different torch distribution visit https://pytorch.org/.
+RUN pip install --no-cache-dir --break-system-packages docling
+
+
+ENTRYPOINT [ "/bin/bash" ]

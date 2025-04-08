@@ -1,0 +1,24 @@
+kind: BuildConfig
+apiVersion: build.openshift.io/v1
+metadata:
+  name: docling-ubi9
+  namespace: tag-ai--pipeline
+spec:
+  output:
+    pushSecret:
+      name: image-paas-registry-sfiresht
+    to:
+      kind: DockerImage
+      name: 'images.paas.redhat.com/genie/docling:latest'
+  resources: {}
+  strategy:
+    type: Docker
+    dockerStrategy:
+      from:
+        kind: ImageStreamTag
+        name: 'ubi9:latest'
+  postCommit: {}
+  source:
+    type: Dockerfile
+    dockerfile: "FROM ubi9:latest\r\nRUN dnf update -y\r\nRUN dnf install -y git bash wget which vim less iputils python3-pip python3-devel\r\nRUN dnf remove -y python3-requests\r\nRUN dnf clean all\r\nRUN pip install --upgrade pip\r\nRUN pip install --no-cache-dir --break-system-packages docling\r\nENTRYPOINT [ \"/bin/bash\" ]"
+  runPolicy: Serial
