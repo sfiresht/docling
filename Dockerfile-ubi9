@@ -2,6 +2,7 @@ FROM ubi9:latest
 
 #define a new home folder and give full permissions to it as the current HOME DIR is / which has no permissions
 ENV HOME=/home/docling
+RUN mkdir /home/docling
 RUN chmod 777 /home/docling
 WORKDIR /home/docling
 
